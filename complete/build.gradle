@@ -1,9 +1,14 @@
 buildscript {
+    ext {
+        springBootVersion = "1.1.0.RC1"
+    }
     repositories {
         maven { url "http://repo.spring.io/libs-milestone" }
+        jcenter()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.2.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
+        classpath 'org.gradle.api.plugins:gradle-cargo-plugin:1.5'
     }
 }
 
@@ -12,6 +17,7 @@ apply plugin: 'eclipse-wtp'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
 apply plugin: 'war'
+apply plugin: 'cargo'
 
 war {
     baseName = 'gs-convert-jar-to-war'
@@ -32,7 +38,33 @@ dependencies {
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
     testCompile("junit:junit")
 }
+dependencies {
+        def cargoVersion = '1.4.5'
+        cargo "org.codehaus.cargo:cargo-core-uberjar:$cargoVersion",
+              "org.codehaus.cargo:cargo-ant:$cargoVersion"
+              
 
+}
+cargo {
+    containerId = 'tomcat8x'
+    port = 8080
+
+    deployable {
+        context = '/'
+    }
+    local {
+        log = file("$buildDir/cargo/log.txt")
+        
+
+        installer {
+            installUrl = 'http://apache.osuosl.org/tomcat/tomcat-8/v8.0.8/bin/apache-tomcat-8.0.8.zip'
+            downloadDir = file("$buildDir/download")
+            extractDir = file("$buildDir/extract")
+        }
+    }
+    
+}
+cargoRunLocal.dependsOn build
 task wrapper(type: Wrapper) {
     gradleVersion = '1.11'
 }
