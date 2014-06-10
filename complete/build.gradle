@@ -1,9 +1,10 @@
 buildscript {
     ext {
-        springBootVersion = "1.1.0.RC1"
+        springBootVersion = "1.1.0.BUILD-SNAPSHOT"
     }
     repositories {
         maven { url "http://repo.spring.io/libs-milestone" }
+        maven { url "http://repo.spring.io/snapshot" }
         jcenter()
     }
     dependencies {
@@ -27,6 +28,7 @@ war {
 repositories {
     mavenCentral()
     maven { url "http://repo.spring.io/libs-milestone" }
+    maven { url "http://repo.spring.io/snapshot" }
 }
 
 configurations {
